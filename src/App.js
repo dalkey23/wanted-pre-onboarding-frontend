@@ -2,6 +2,7 @@ import {  BrowserRouter, Routes, Route, Link } from 'react-router-dom'
 
 import Signup from './sign/signup';
 import Signin from './sign/signin';
+import Todo from './todo'
 
 function App() {
     return (
@@ -15,12 +16,15 @@ function App() {
                 <Link to ='/signin'>
                   <li>signin</li>
                 </Link>
-                <li>todo-list</li>
+                <Link to ='/todo'>
+                  <li>todo-list</li>
+                </Link>
               </ul>
               <hr />
               <Routes>
                 <Route path='/signup' element={<Signup />}/>
                 <Route path='/signin' element={<Signin />}/>
+                <Route path='/todo' element={<Todo />} />
               </Routes>
             </BrowserRouter>
         </>

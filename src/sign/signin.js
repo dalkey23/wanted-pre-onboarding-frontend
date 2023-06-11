@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as SC from "./signSC";
 
@@ -6,42 +7,29 @@ const Signin = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const [isEmail, setIsEmail] = useState(false);
-    const [isPassword, setIsPassword] = useState(false);
-
-    const checkedEmail = (e) => {
-        const curEmail = e.target.value;
-        if (curEmail.includes("@")) {
-            setEmail(curEmail);
-            setIsEmail(true);
-        } else {
-            setEmail("");
-            setIsEmail(false);
-        }
-    };
-
-    const checkedPassword = (e) => {
-        const curPassword = e.target.value;
-        if (curPassword.length >= 8) {
-            setPassword(curPassword);
-            setIsPassword(true);
-        } else {
-            setPassword("");
-            setIsPassword(false);
-        }
-    };
+    const navigate = useNavigate();
 
     const submitHandler = (e) => {
         e.preventDefault();
         axios
-            .post("http://localhost:8000/auth/signup", { email, password })
+            .post(
+                "https://www.pre-onboarding-selection-task.shop/auth/signin",
+                { email, password }
+            )
             .then((res) => {
-                console.log(res);
+                localStorage.setItem("access_token", res.data.access_token);
+                navigate('/todo')
             })
             .catch((err) => {
                 console.log(err);
             });
     };
+
+    useEffect(() => {
+        if (localStorage.getItem("access_token")) {
+            navigate("/todo");
+        }
+    }, []);
 
     return (
         <SC.Container>
@@ -55,7 +43,9 @@ const Signin = () => {
                         type="text"
                         placeholder="아이디"
                         name="email"
-                        onChange={checkedEmail}
+                        onChange={(e) => {
+                            setEmail(e.target.value);
+                        }}
                     />
                 </SC.IdLine>
                 <SC.PwLine>
@@ -65,13 +55,12 @@ const Signin = () => {
                         type="password"
                         placeholder="비밀번호"
                         name="password"
-                        onChange={checkedPassword}
+                        onChange={(e) => {
+                            setPassword(e.target.value);
+                        }}
                     />
                 </SC.PwLine>
-                <button
-                    data-testid="signup-button"
-                    type="submit"
-                    disabled={isEmail && isPassword ? false : true}>
+                <button data-testid="signin-button" type="submit">
                     로그인
                 </button>
             </SC.SignFrom>

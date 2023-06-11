@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as SC from "./signSC";
@@ -10,7 +10,7 @@ const Singup = () => {
     const [isEmail, setIsEmail] = useState(false);
     const [isPassword, setIsPassword] = useState(false);
 
-    const nav = useNavigate();
+    const navigate = useNavigate();
 
     const checkedEmail = (e) => {
         const curEmail = e.target.value;
@@ -37,15 +37,23 @@ const Singup = () => {
     const submitHandler = (e) => {
         e.preventDefault();
         axios
-            .post("https://www.pre-onboarding-selection-task.shop/auth/signup", { email, password })
-            .then((res) => {
-                nav('/signin')
-
+            .post(
+                "https://www.pre-onboarding-selection-task.shop/auth/signup",
+                { email, password }
+            )
+            .then(() => {
+                navigate("/signin");
             })
             .catch((err) => {
                 console.log(err);
             });
     };
+
+    useEffect(() => {
+        if (localStorage.getItem("access_token")) {
+            navigate("/todo");
+        }
+    }, []);
 
     return (
         <SC.Container>

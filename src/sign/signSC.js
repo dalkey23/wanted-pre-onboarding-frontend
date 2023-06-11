@@ -15,7 +15,7 @@ export const Container = styled.div`
 `;
 
 export const SignFrom = styled.form`
-    border : red 1px solid;
+    
 `
 
 export const IdLine = styled.div`
