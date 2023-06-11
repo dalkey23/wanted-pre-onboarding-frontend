@@ -49,11 +49,6 @@ const Singup = () => {
             });
     };
 
-    useEffect(() => {
-        if (localStorage.getItem("access_token")) {
-            navigate("/todo");
-        }
-    }, []);
 
     return (
         <SC.Container>
