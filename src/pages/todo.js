@@ -2,9 +2,44 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Todo = () => {
+const EditMode = ({ todo }) => {
+    return (
+        <li key={todo.id}>
+            <input type="checkbox" />
+            <input defaultValue={todo.todo} />
+            <button data-testid="submit-button">제출</button>
+            <button data-testid="cancel-button">취소</button>
+        </li>
+    );
+};
+
+const NormalMode = ({ todo, changeEditMode, deleteTodo }) => {
+    const clickModifyButton = () => {
+        changeEditMode(todo.id);
+    };
+
+    const clickDeleteButton = () => {
+        deleteTodo();
+    };
+
+    return (
+        <li key={todo.id}>
+            <input type="checkbox" />
+            <span>{todo.todo}</span>
+            <button data-testid="modify-button" onClick={clickModifyButton}>
+                수정
+            </button>
+            <button data-testid="delete-button" onClick={clickDeleteButton}>
+                삭제
+            </button>
+        </li>
+    );
+};
+
+const TodoList = () => {
     const [newTodo, setNewTodo] = useState("");
-    const [todos, setTodos] = useState([]);
+    const [todoList, setTodoList] = useState([]);
+    const [editedTodo, setEditedTodo] = useState(0);
     const token = localStorage.getItem("access_token");
     const navigate = useNavigate();
 
@@ -24,13 +59,17 @@ const Todo = () => {
             });
     };
 
+    const deleteTodo = () => {
+        console.log("deleteTodo")
+    }
+
     useEffect(() => {
         axios
             .get("https://www.pre-onboarding-selection-task.shop/todos", {
                 headers: { Authorization: `Bearer ${token}` },
             })
             .then((res) => {
-                setTodos(res.data);
+                setTodoList(res.data);
             })
             .catch((err) => {
                 console.log(err);
@@ -49,18 +88,25 @@ const Todo = () => {
                 추가
             </button>
             <ul>
-                {todos.map((todo) => {
-                    return (
-                        <div key={todo.id}>
-                            <li >{todo.todo}</li>
-                            <button>수정</button>
-                            <button>삭제</button>
-                        </div>
-                    );
+                {todoList.map((todo) => {
+                    if (todo.id === editedTodo) {
+                        return <EditMode todo={todo} key={todo.id} />;
+                    } else {
+                        return (
+                            <NormalMode
+                                todo={todo}
+                                key={todo.id}
+                                changeEditMode={(id) => {
+                                    setEditedTodo(id);
+                                }}
+                                deleteTodo = {deleteTodo}
+                            />
+                        );
+                    }
                 })}
             </ul>
         </div>
     );
 };
 
-export default Todo;
+export default TodoList;
