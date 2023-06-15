@@ -2,12 +2,18 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const EditMode = ({ todo }) => {
+const EditMode = ({ todo, updateTodo }) => {
+    const clicksubmitButton = () => {
+        updateTodo();
+    };
+
     return (
         <li key={todo.id}>
             <input type="checkbox" />
             <input defaultValue={todo.todo} />
-            <button data-testid="submit-button">제출</button>
+            <button data-testid="submit-button" onClick={clicksubmitButton}>
+                제출
+            </button>
             <button data-testid="cancel-button">취소</button>
         </li>
     );
@@ -19,7 +25,7 @@ const NormalMode = ({ todo, changeEditMode, deleteTodo }) => {
     };
 
     const clickDeleteButton = () => {
-        deleteTodo();
+        deleteTodo(todo.id);
     };
 
     return (
@@ -39,7 +45,7 @@ const NormalMode = ({ todo, changeEditMode, deleteTodo }) => {
 const TodoList = () => {
     const [newTodo, setNewTodo] = useState("");
     const [todoList, setTodoList] = useState([]);
-    const [editedTodo, setEditedTodo] = useState(0);
+    const [editedTodo, setEditedTodo] = useState(-1);
     const token = localStorage.getItem("access_token");
     const navigate = useNavigate();
 
@@ -59,9 +65,26 @@ const TodoList = () => {
             });
     };
 
-    const deleteTodo = () => {
-        console.log("deleteTodo")
-    }
+    const updateTodo = () => {
+        console.log("updateTodo");
+    };
+
+    const deleteTodo = (id) => {
+        console.log(`id: ${id}`);
+        axios
+            .delete(
+                `https://www.pre-onboarding-selection-task.shop/todos/${id}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            )
+            .then(() => {
+                window.location.href = "/todo";
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    };
 
     useEffect(() => {
         axios
@@ -90,7 +113,13 @@ const TodoList = () => {
             <ul>
                 {todoList.map((todo) => {
                     if (todo.id === editedTodo) {
-                        return <EditMode todo={todo} key={todo.id} />;
+                        return (
+                            <EditMode
+                                todo={todo}
+                                key={todo.id}
+                                updateTodo={updateTodo}
+                            />
+                        );
                     } else {
                         return (
                             <NormalMode
@@ -99,7 +128,7 @@ const TodoList = () => {
                                 changeEditMode={(id) => {
                                     setEditedTodo(id);
                                 }}
-                                deleteTodo = {deleteTodo}
+                                deleteTodo={deleteTodo}
                             />
                         );
                     }
