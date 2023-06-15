@@ -2,19 +2,23 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-const EditMode = ({ todo, updateTodo }) => {
-    const clicksubmitButton = () => {
+const EditMode = ({ todo, updateTodo, cancelTodo }) => {
+    const clickSubmitButton = () => {
         updateTodo();
     };
+
+    const clickCancelButton = () => {
+        cancelTodo();
+    }
 
     return (
         <li key={todo.id}>
             <input type="checkbox" />
             <input defaultValue={todo.todo} />
-            <button data-testid="submit-button" onClick={clicksubmitButton}>
+            <button data-testid="submit-button" onClick={clickSubmitButton}>
                 제출
             </button>
-            <button data-testid="cancel-button">취소</button>
+            <button data-testid="cancel-button" onClick={clickCancelButton}>취소</button>
         </li>
     );
 };
@@ -118,6 +122,7 @@ const TodoList = () => {
                                 todo={todo}
                                 key={todo.id}
                                 updateTodo={updateTodo}
+                                cancelTodo={()=>{setEditedTodo(-1)}}
                             />
                         );
                     } else {
