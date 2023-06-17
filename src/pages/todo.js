@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const EditMode = ({ todo, updateTodo, cancelTodo }) => {
     const [editedTodo, setEditTodo] = useState("");
@@ -14,11 +15,15 @@ const EditMode = ({ todo, updateTodo, cancelTodo }) => {
 
     const clickCheckbox = () => {
         updateTodo(todo.id, todo.todo, !todo.isCompleted);
-    }
+    };
 
     return (
         <li key={todo.id}>
-            <input type="checkbox" checked={todo.isCompleted} onChange={clickCheckbox}/>
+            <input
+                type="checkbox"
+                checked={todo.isCompleted}
+                onChange={clickCheckbox}
+            />
             <input
                 defaultValue={todo.todo}
                 onChange={(e) => {
@@ -46,11 +51,15 @@ const NormalMode = ({ todo, changeEditMode, deleteTodo, updateTodo }) => {
 
     const clickCheckbox = () => {
         updateTodo(todo.id, todo.todo, !todo.isCompleted);
-    }
+    };
 
     return (
         <li key={todo.id}>
-            <input type="checkbox" checked={todo.isCompleted} onChange={clickCheckbox}/>
+            <input
+                type="checkbox"
+                checked={todo.isCompleted}
+                onChange={clickCheckbox}
+            />
             <span>{todo.todo}</span>
             <button data-testid="modify-button" onClick={clickModifyButton}>
                 수정
@@ -67,6 +76,7 @@ const TodoList = () => {
     const [todoList, setTodoList] = useState([]);
     const [editedTodoId, setEditedTodoId] = useState(-1);
     const token = localStorage.getItem("access_token");
+    const navigate = useNavigate();
 
     const addTodo = () => {
         axios
@@ -76,7 +86,6 @@ const TodoList = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             .then((res) => {
-                console.log(res);
                 window.location.href = "/todo";
             })
             .catch((err) => {
@@ -85,7 +94,6 @@ const TodoList = () => {
     };
 
     const updateTodo = (id, editedTodo, isCompleted) => {
-        console.log(`id:${id}, editedTodo:${editedTodo}`);
         axios
             .put(
                 `https://www.pre-onboarding-selection-task.shop/todos/${id}`,
@@ -93,7 +101,6 @@ const TodoList = () => {
                 { headers: { Authorization: `Bearer ${token}` } }
             )
             .then((res) => {
-                console.log(res);
                 window.location.href = "/todo";
             })
             .catch((err) => {
@@ -102,7 +109,6 @@ const TodoList = () => {
     };
 
     const deleteTodo = (id) => {
-        console.log(`id: ${id}`);
         axios
             .delete(
                 `https://www.pre-onboarding-selection-task.shop/todos/${id}`,
@@ -119,16 +125,21 @@ const TodoList = () => {
     };
 
     useEffect(() => {
-        axios
-            .get("https://www.pre-onboarding-selection-task.shop/todos", {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((res) => {
-                setTodoList(res.data);
-            })
-            .catch((err) => {
-                console.log(err);
-            });
+        const hasToken = localStorage.getItem("access_token");
+        if (!hasToken) {
+            navigate("/signin");
+        } else {
+            axios
+                .get("https://www.pre-onboarding-selection-task.shop/todos", {
+                    headers: { Authorization: `Bearer ${token}` },
+                })
+                .then((res) => {
+                    setTodoList(res.data);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
     }, []);
 
     return (

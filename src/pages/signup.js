@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as SC from "./signSC";
@@ -46,8 +46,16 @@ const Singup = () => {
             })
             .catch((err) => {
                 console.log(err);
+                alert("다시입력해주세요");
             });
     };
+
+    useEffect(() => {
+        const hasToken = localStorage.getItem("access_token");
+        if (hasToken) {
+            navigate("/todo");
+        }
+    },[]);
 
     return (
         <SC.Container>
