@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as SC from "./signSC";
@@ -49,10 +49,9 @@ const Singup = () => {
             });
     };
 
-
     return (
         <SC.Container>
-            <h1>SignUp</h1>
+            <h1>회원가입</h1>
 
             <SC.SignFrom onSubmit={submitHandler}>
                 <SC.IdLine>
