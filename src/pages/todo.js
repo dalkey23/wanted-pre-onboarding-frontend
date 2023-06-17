@@ -19,17 +19,20 @@ const EditMode = ({ todo, updateTodo, cancelTodo }) => {
 
     return (
         <li key={todo.id}>
-            <input
-                type="checkbox"
-                checked={todo.isCompleted}
-                onChange={clickCheckbox}
-            />
-            <input
-                defaultValue={todo.todo}
-                onChange={(e) => {
-                    setEditTodo(e.target.value);
-                }}
-            />
+            <label>
+                <input
+                    type="checkbox"
+                    checked={todo.isCompleted}
+                    onChange={clickCheckbox}
+                />
+                <input
+                    data-testid="modify-input"
+                    defaultValue={todo.todo}
+                    onChange={(e) => {
+                        setEditTodo(e.target.value);
+                    }}
+                />
+            </label>
             <button data-testid="submit-button" onClick={clickSubmitButton}>
                 제출
             </button>
@@ -55,12 +58,14 @@ const NormalMode = ({ todo, changeEditMode, deleteTodo, updateTodo }) => {
 
     return (
         <li key={todo.id}>
-            <input
-                type="checkbox"
-                checked={todo.isCompleted}
-                onChange={clickCheckbox}
-            />
-            <span>{todo.todo}</span>
+            <label>
+                <input
+                    type="checkbox"
+                    checked={todo.isCompleted}
+                    onChange={clickCheckbox}
+                />
+                <span>{todo.todo}</span>
+            </label>
             <button data-testid="modify-button" onClick={clickModifyButton}>
                 수정
             </button>
